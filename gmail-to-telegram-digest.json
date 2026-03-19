@@ -1,0 +1,185 @@
+{
+  "name": "Email Summary to Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "from",
+              "value": "={{ $json.From }}\n"
+            },
+            {
+              "name": "subject",
+              "value": "={{ $json.Subject }}"
+            },
+            {
+              "name": "text",
+              "value": "={{$json[\"snippet\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4b760d0e-c8bd-4d76-8849-5b3c90d15e80",
+      "name": "Set Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "8475555048",
+        "text": "=hello\n{{ $json.text }}{{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "0ef35ca2-da90-4c69-8f50-9cbb8bc337ab",
+      "name": "Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        80
+      ],
+      "webhookId": "41c8b8db-ea7d-45db-9b81-b9ca8743e3b7",
+      "credentials": {
+        "telegramApi": {
+          "id": "hGpiAe8ZFafWaAHz",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an email assistant. Summarize the following email in a clean, readable format. Follow this template exactly and include line breaks between fields. Do NOT repeat any content:\n\nFrom: <sender name and email>  \nSubject: <subject line>  \nSummary: <brief description of the email content>  \nRecommended Action: <what to do with this email>\n\nEmail details:\n\nFrom: {{$json[\"from\"]}}\nSubject: {{$json[\"subject\"]}}\nBody: {{$json[\"text\"]}}\n\nMake sure:\n\n- Each field starts on a **new line**  \n- There are **blank lines between different fields**  \n- Output is concise, no repeated paragraphs",
+        "messages": {
+          "messageValues": []
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1280,
+        80
+      ],
+      "id": "58db232a-a4aa-4627-86b4-f91f26f64ae2",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        304
+      ],
+      "id": "adb03970-ae2a-4500-b00a-5a401a240a35",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "i1Sbn02rTBuE3mc5",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        832,
+        80
+      ],
+      "id": "3f6ae9b1-e324-4b5b-9180-4ce099e2b5ff",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "8NkEko8XkkmNaVqU",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram": {
+      "main": [
+        []
+      ]
+    },
+    "Set Fields": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1d15a42a-5c28-4f27-af44-f0fdc57a0af4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9fd18cd12e421d3acbcb3dbed38d15f71c2cad127da979ea9fc9ef78087e6baa"
+  },
+  "id": "bCum7hpUsaO4Y5ar",
+  "tags": []
+}
