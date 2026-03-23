@@ -4,7 +4,7 @@
 
 ---
 
-## 🗺️ Workflow Overview
+## 🗺️ Workflow  Overview
 
 ![Email Summary to Telegram Workflow](./workflow-preview.png)
 
