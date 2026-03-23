@@ -1,6 +1,6 @@
 # 📧➡️ Email Summary to Telegram
 
-> Automatically summarizes incoming Gmails  using an LLM chain and sends the digest to your Telegram chat — no manual inbox checking needed.
+> Automatically summarizes incoming Gmails  using an LLM chain and sends the digest to your Telegram chat — no manual inbox checking needed everytime .
 
 ---
 
